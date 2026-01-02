@@ -63,9 +63,9 @@ const ContactForm = ({
   };
 
   const validatePhone = (phone: string): string | undefined => {
-    if (!phone.trim()) return "Phone number is required";
+    if (!String(phone).trim()) return "Phone number is required";
     const phoneRegex = /^[\d\s\-+()]{7,20}$/;
-    if (!phoneRegex.test(phone)) return "Please enter a valid phone number";
+    if (!phoneRegex.test(String(phone))) return "Please enter a valid phone number";
     return undefined;
   };
 
@@ -111,14 +111,13 @@ const ContactForm = ({
       handleCancel();
       return;
     }
-
     if (!validateForm()) return;
 
     setIsSubmitting(true);
     setSubmitStatus("idle");
 
     try {
-      await Promise.resolve(onSubmit(formData));
+      await Promise.resolve(onSubmit({...formData,phone: String(formData.phone)}));
       setSubmitStatus("success");
       if (mode === "view") {
         setIsEditMode(false);
@@ -145,7 +144,6 @@ const ContactForm = ({
 
   const formCard = (
     <form
-      onSubmit={handleSubmit}
       className="bg-white/95 rounded-2xl shadow-2xl shadow-blue-100 border border-slate-200 p-8 space-y-6 backdrop-blur-sm"
     >
       <div className="space-y-2">
@@ -186,7 +184,7 @@ const ContactForm = ({
         </label>
         <input
           id="phone"
-          type="tel"
+          type="text"
           value={formData.phone}
           onChange={(e) => handleChange("phone", e.target.value)}
           placeholder="+1 (555) 000-0000"
@@ -248,7 +246,7 @@ const ContactForm = ({
         </button>
         {(mode === "create" || isEditMode) && (
           <button
-            type="submit"
+            onClick={handleSubmit}
             disabled={isSubmitting}
             className="flex-1 px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold transition-all duration-200 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
