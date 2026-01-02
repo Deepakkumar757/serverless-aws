@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { getContacts } from "../services/api";
-import { useAuth } from "react-oidc-context";
+import React from "react";
 
 export interface ContactItem {
   id: number;
